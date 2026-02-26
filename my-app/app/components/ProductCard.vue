@@ -37,11 +37,6 @@ const discountPercent = computed(() => {
 </script>
 
 <template>
-  <!--
-    @container stelt de container query context in.
-    Vereist: @tailwindcss/container-queries plugin in tailwind.config.
-    Fallback: bloklay-out werkt altijd zonder JS/plugin.
-  -->
   <article
     class="@container group relative bg-white rounded-2xl shadow-md hover:shadow-xl
            transition-shadow duration-300 overflow-hidden border border-stone-100"
@@ -69,11 +64,6 @@ const discountPercent = computed(() => {
       </span>
     </div>
 
-    <!--
-      Container query layout:
-      - Smal  (<20rem): gestapeld (flex-col)  — bijv. sidebar
-      - Breed (>=20rem): naast elkaar (flex-row) — bijv. grid
-    -->
     <div class="flex flex-col @[20rem]:flex-row">
 
       <!-- Afbeelding -->
@@ -114,7 +104,7 @@ const discountPercent = computed(() => {
           </ul>
         </div>
 
-        <!-- Rating (semantisch: role="img" + aria-label) -->
+        <!-- Rating -->
         <div
           role="img"
           :aria-label="`Beoordeling: ${product.rating} van 5 sterren, ${product.reviewCount} reviews`"
@@ -145,52 +135,54 @@ const discountPercent = computed(() => {
 
           <!--
             Progressive enhancement:
-            - Zonder JS: gebruik <form action="/cart" method="post"> als wrapper
-            - Met JS: intercepten we click voor async feedback + optimistische UI
+            - Zonder JS: form POST naar /cart met hidden productId input
+            - Met JS: @submit.prevent onderschept de submit voor async feedback
           -->
-          <button
-            type="button"
-            :disabled="!product.inStock || loading"
-            :aria-pressed="added"
-            :aria-label="added ? 'Add to card' : 'Adding to cart'"
-            class="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm
-                   font-semibold transition-all duration-200
-                   focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-                   focus-visible:outline-green-600
-                   disabled:opacity-40 disabled:cursor-not-allowed"
-            :class="added
-              ? 'bg-green-500 text-white'
-              : 'bg-stone-900 text-white hover:bg-green-400 active:scale-95'"
-            @click="addToCart"
-          >
-            <!-- Loading spinner -->
-            <svg
-              v-if="loading"
-              class="animate-spin h-4 w-4"
-              aria-hidden="true"
-              fill="none"
-              viewBox="0 0 24 24"
+          <form action="/cart" method="post" @submit.prevent="addToCart">
+            <input type="hidden" name="productId" :value="product.id" />
+            <button
+              type="submit"
+              :disabled="!product.inStock || loading"
+              :aria-pressed="added"
+              :aria-label="added ? 'Added to cart' : 'Add to cart'"
+              class="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm
+                     font-semibold transition-all duration-200
+                     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+                     focus-visible:outline-green-600
+                     disabled:opacity-40 disabled:cursor-not-allowed"
+              :class="added
+                ? 'bg-green-500 text-white'
+                : 'bg-stone-900 text-white hover:bg-green-400 active:scale-95'"
             >
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-            </svg>
+              <!-- Loading spinner -->
+              <svg
+                v-if="loading"
+                class="animate-spin h-4 w-4"
+                aria-hidden="true"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              </svg>
 
-            <!-- Vinkje bij succes -->
-            <svg v-else-if="added" class="h-4 w-4" aria-hidden="true" fill="none"
-                 stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-            </svg>
+              <!-- Vinkje bij succes -->
+              <svg v-else-if="added" class="h-4 w-4" aria-hidden="true" fill="none"
+                   stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
 
-            <!-- Winkelwagen icoon -->
-            <svg v-else class="h-4 w-4" aria-hidden="true" fill="none"
-                 stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3 3h2l.4 2M7 13h10l4-10H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9
-                       M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"/>
-            </svg>
+              <!-- Winkelwagen icoon -->
+              <svg v-else class="h-4 w-4" aria-hidden="true" fill="none"
+                   stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 3h2l.4 2M7 13h10l4-10H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9
+                         M9 21a1 1 0 100-2 1 1 0 000 2zm6 0a1 1 0 100-2 1 1 0 000 2z"/>
+              </svg>
 
-            <span>{{ added ? 'Added!' : 'In cart' }}</span>
-          </button>
+              <span>{{ added ? 'Added!' : 'In cart' }}</span>
+            </button>
+          </form>
         </div>
       </div>
     </div>
