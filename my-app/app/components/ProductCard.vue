@@ -82,7 +82,7 @@ const discountPercent = computed(() => {
           <p class="text-xs text-stone-400 uppercase tracking-widest font-medium mb-0.5">
             {{ product.brand }}
           </p>
-          <h2 class="text-base sm:text-lg font-bold text-stone-800 leading-snug">
+          <h2 class="text-base @[40rem]:text-lg font-bold text-stone-800 leading-snug">
             {{ product.name }}
           </h2>
 
