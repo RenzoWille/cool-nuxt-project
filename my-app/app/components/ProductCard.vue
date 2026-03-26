@@ -1,4 +1,6 @@
 <script setup>
+import { ref, computed } from 'vue'
+
 const props = defineProps({
   product: {
     type: Object,
@@ -40,12 +42,9 @@ const discountPercent = computed(() => {
   <article
     class="@container group relative bg-white rounded-2xl shadow-md hover:shadow-xl
            transition-shadow duration-300 overflow-hidden border border-stone-100"
-    :aria-label="`Product: ${product.name}`"
   >
-    <!-- Badge -->
     <div
       v-if="product.badge"
-      aria-label="Productlabel"
       class="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs
              font-bold px-2 py-1 rounded-full tracking-wide"
     >
@@ -53,10 +52,8 @@ const discountPercent = computed(() => {
       <span v-if="discountPercent" class="ml-1">−{{ discountPercent }}%</span>
     </div>
 
-    <!-- Uitverkocht overlay -->
     <div
       v-if="!product.inStock"
-      aria-live="polite"
       class="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex items-center justify-center"
     >
       <span class="text-stone-500 font-semibold text-sm tracking-widest uppercase">
@@ -64,10 +61,9 @@ const discountPercent = computed(() => {
       </span>
     </div>
 
-    <div class="flex flex-col @[20rem]:flex-row">
+    <div class="flex flex-col sm:flex-row">
 
-      <!-- Afbeelding -->
-      <div class="relative @[20rem]:w-2/5 @[20rem]:shrink-0 overflow-hidden bg-stone-50">
+      <div class="relative sm:w-2/5 sm:shrink-0 overflow-hidden bg-stone-50">
         <img
           :src="product.image"
           :alt="`Afbeelding van ${product.name}`"
@@ -75,25 +71,22 @@ const discountPercent = computed(() => {
           height="600"
           loading="lazy"
           decoding="async"
-          class="w-full h-44 @[20rem]:h-full object-cover
+          class="w-full h-44 sm:h-full object-cover
                  transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
-      <!-- Content -->
-      <div class="flex flex-col justify-between p-4 @[20rem]:p-5 gap-3 flex-1">
+      <div class="flex flex-col justify-between p-4 sm:p-5 gap-3 flex-1">
 
-        <!-- Merk + naam -->
         <div>
           <p class="text-xs text-stone-400 uppercase tracking-widest font-medium mb-0.5">
             {{ product.brand }}
           </p>
-          <h2 class="text-base @[20rem]:text-lg font-bold text-stone-800 leading-snug">
+          <h2 class="text-base sm:text-lg font-bold text-stone-800 leading-snug">
             {{ product.name }}
           </h2>
 
-          <!-- Tags -->
-          <ul class="flex flex-wrap gap-1.5 mt-2" aria-label="Producteigenschappen">
+          <ul class="flex flex-wrap gap-1.5 mt-2">
             <li
               v-for="tag in product.tags"
               :key="tag"
@@ -104,13 +97,8 @@ const discountPercent = computed(() => {
           </ul>
         </div>
 
-        <!-- Rating -->
-        <div
-          role="img"
-          :aria-label="`Beoordeling: ${product.rating} van 5 sterren, ${product.reviewCount} reviews`"
-          class="flex items-center gap-1.5"
-        >
-          <span class="flex text-amber-400 text-sm" aria-hidden="true">
+        <div class="flex items-center gap-1.5">
+          <span class="flex text-amber-400 text-sm">
             <template v-for="i in 5" :key="i">
               <span :class="i <= Math.round(product.rating) ? 'opacity-100' : 'opacity-20'">★</span>
             </template>
@@ -118,33 +106,24 @@ const discountPercent = computed(() => {
           <span class="text-xs text-stone-400">({{ product.reviewCount }})</span>
         </div>
 
-        <!-- Prijs + knop -->
         <div class="flex items-end justify-between gap-2 flex-wrap">
           <div>
-            <span class="text-lg font-extrabold text-stone-900" aria-label="Huidige prijs">
+            <span class="text-lg font-extrabold text-stone-900">
               €{{ product.price.toFixed(2) }}
             </span>
             <span
               v-if="product.originalPrice"
               class="ml-1.5 text-sm text-stone-400 line-through"
-              aria-label="Oorspronkelijke prijs"
             >
               €{{ product.originalPrice.toFixed(2) }}
             </span>
           </div>
 
-          <!--
-            Progressive enhancement:
-            - Zonder JS: form POST naar /cart met hidden productId input
-            - Met JS: @submit.prevent onderschept de submit voor async feedback
-          -->
           <form action="/cart" method="post" @submit.prevent="addToCart">
             <input type="hidden" name="productId" :value="product.id" />
             <button
               type="submit"
               :disabled="!product.inStock || loading"
-              :aria-pressed="added"
-              :aria-label="added ? 'Added to cart' : 'Add to cart'"
               class="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm
                      font-semibold transition-all duration-200
                      focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
@@ -154,11 +133,9 @@ const discountPercent = computed(() => {
                 ? 'bg-green-500 text-white'
                 : 'bg-stone-900 text-white hover:bg-green-400 active:scale-95'"
             >
-              <!-- Loading spinner -->
               <svg
                 v-if="loading"
                 class="animate-spin h-4 w-4"
-                aria-hidden="true"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -166,14 +143,12 @@ const discountPercent = computed(() => {
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
               </svg>
 
-              <!-- Vinkje bij succes -->
-              <svg v-else-if="added" class="h-4 w-4" aria-hidden="true" fill="none"
+              <svg v-else-if="added" class="h-4 w-4" fill="none"
                    stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
               </svg>
 
-              <!-- Winkelwagen icoon -->
-              <svg v-else class="h-4 w-4" aria-hidden="true" fill="none"
+              <svg v-else class="h-4 w-4" fill="none"
                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"
                       d="M3 3h2l.4 2M7 13h10l4-10H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9
