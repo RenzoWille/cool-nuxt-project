@@ -61,9 +61,9 @@ const discountPercent = computed(() => {
       </span>
     </div>
 
-    <div class="flex flex-col sm:flex-row">
+    <div class="flex flex-col @[40rem]:flex-row">
 
-      <div class="relative sm:w-2/5 sm:shrink-0 overflow-hidden bg-stone-50">
+      <div class="relative @[40rem]:w-2/5 @[40rem]:shrink-0 overflow-hidden bg-stone-50">
         <img
           :src="product.image"
           :alt="`Afbeelding van ${product.name}`"
@@ -71,12 +71,12 @@ const discountPercent = computed(() => {
           height="600"
           loading="lazy"
           decoding="async"
-          class="w-full h-44 sm:h-full object-cover
+          class="w-full h-44 @[40rem]:h-full object-cover
                  transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
-      <div class="flex flex-col justify-between p-4 sm:p-5 gap-3 flex-1">
+      <div class="flex flex-col justify-between p-4 @[40rem]:p-5 gap-3 flex-1">
 
         <div>
           <p class="text-xs text-stone-400 uppercase tracking-widest font-medium mb-0.5">
