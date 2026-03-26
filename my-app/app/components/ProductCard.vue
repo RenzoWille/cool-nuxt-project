@@ -22,12 +22,12 @@ const added = ref(false)
 const loading = ref(false)
 
 async function addToCart() {
-  if (loading.value || !props.product.inStock) return
-  loading.value = true
-  await new Promise(r => setTimeout(r, 600))
-  added.value = true
-  loading.value = false
-  setTimeout(() => (added.value = false), 2000)
+  if (loading.value || !props.product.inStock) return // als loading bezig is of product niet op voorraad is stop meteen
+  loading.value = true //spinner gaat aan
+  await new Promise(r => setTimeout(r, 600)) //spinner wacht 600ms 
+  added.value = true //request is klaar, knop wordt groen met een vinkje
+  loading.value = false //spinner gaat uit
+  setTimeout(() => (added.value = false), 2000) //wacht 2s voordat de knop weer terug gaat naar normale state
 }
 
 const discountPercent = computed(() => {
